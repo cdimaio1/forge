@@ -1,8 +1,8 @@
 # Forge
 
-**Turn a rough business idea into a first-pass brand kit.**
+**Find a name worth building on.**
 
-Enter an idea, who it’s for, and a visual vibe. Forge uses those inputs to present a name, tagline, brand story, color palette, and typography recommendations in one place.
+Describe a business idea and who it's for, pick a feel, and Forge gives you a shortlist of distinctive names. Each one comes with the reason it works. Pick a name and you see it as a brand: taglines, positioning, voice, an accessible color palette, and a type pairing, all previewed together on a mock homepage.
 
 ## Try it locally
 
@@ -11,14 +11,30 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000) and start a brand kit. Try a neighborhood record shop for vinyl collectors with a retro vibe.
+Open [localhost:3000](http://localhost:3000) and try one of the example briefs.
+
+## How names are made
+
+Forge doesn't glue a suffix onto your first word. The [naming engine](lib/brand/names.ts) parses the brief, matches it to hand-curated word banks in [the lexicon](lib/brand/lexicon.ts), and uses the same techniques naming studios use:
+
+| Strategy | Example | Why |
+| --- | --- | --- |
+| Metaphor | Chorus, Collar | A real word borrowed from the world of the business |
+| Blend | Encorecord, Whistleash | Two words merged where their letters overlap |
+| Compound | Needleyard, Leashbean | Two plain words fused into a place-like name |
+| Coined | Sonette, Amicola | Built on a Latin or Greek root with real meaning |
+| Phrase | Second Crate, Little Leash | A short name with personality |
+| Descriptive | Recordhouse | Says what you do; clear on day one, harder to own |
+
+Overused startup endings (-ify, -ly, -r, .io) are filtered out, and every shortlist mixes strategies.
 
 ## How it works
 
-1. The [start form](app/start/page.tsx) collects the idea, audience, and vibe.
-2. The [generate endpoint](app/api/generate/route.ts) calls a [local mock generator](lib/mockGenerator.ts).
-3. The [results screen](app/results/page.tsx) renders the generated direction as a [brand kit](components/BrandKit.tsx).
+- **[Brief form](components/BriefForm.tsx)** on the home page collects the idea, audience, and feel.
+- **[Results](components/results/ResultsView.tsx)** generate everything in the browser from the brief. The URL holds the brief and your selections, so any result can be shared or bookmarked.
+- **[Kit generator](lib/brand/kit.ts)** builds taglines, positioning, voice, WCAG-checked palettes, and Google Fonts pairings.
+- **[`POST /api/generate`](app/api/generate/route.ts)** returns the same kit as JSON (`{ idea, customer, vibe, seed? }`).
 
-This is a prototype with preset generation logic, not an AI service. It does not require an API key.
+Generation is deterministic and runs locally. No API key needed.
 
 Built with Next.js, React, TypeScript, and Tailwind CSS.
