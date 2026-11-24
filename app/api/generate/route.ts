@@ -1,15 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { mockGenerate } from "@/lib/mockGenerator";
+import { generateKit } from "@/lib/brand/kit";
+import { isVibe } from "@/lib/brand/lexicon";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { idea, customer, vibe } = body;
-
-  if (!idea || !customer || !vibe) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Request body must be JSON." }, { status: 400 });
   }
 
-  const result = mockGenerate({ idea, customer, vibe });
+  const { idea, customer, vibe, seed } = (body ?? {}) as Record<string, unknown>;
+  if (typeof idea !== "string" || !idea.trim() || typeof customer !== "string" || !customer.trim()) {
+    return NextResponse.json({ error: "Both idea and customer are required." }, { status: 400 });
+  }
+  if (!isVibe(vibe)) {
+    return NextResponse.json({ error: "vibe must be one of modern, luxury, playful, retro, tech." }, { status: 400 });
+  }
 
-  return NextResponse.json(result);
+  return NextResponse.json(
+    generateKit({ idea, customer, vibe, seed: typeof seed === "number" ? seed : 0 }),
+  );
 }

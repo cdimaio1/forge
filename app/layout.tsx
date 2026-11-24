@@ -2,23 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Forge — Turn ideas into companies",
-  description: "AI-powered brand kit generator for startups",
+  title: "Forge: name and brand your idea",
+  description: "Describe a business idea and get a shortlist of names, taglines, colors, and type to start your brand.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="bg-zinc-950 text-white font-sans antialiased min-h-screen">
-        {children}
-      </body>
+      <body className="min-h-screen bg-canvas font-sans text-fg">{children}</body>
     </html>
   );
 }
