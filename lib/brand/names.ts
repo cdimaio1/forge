@@ -96,7 +96,7 @@ function blend(rng: Rng, brief: Brief, vibe: Vibe): NameIdea[] {
       const al = a.toLowerCase();
       const bl = b.toLowerCase();
       // Find the longest overlap where the end of A is the start of B.
-      for (let k = Math.min(4, al.length - 2, bl.length - 2); k >= 2; k--) {
+      for (let k = Math.min(4, al.length - 2, bl.length - 2); k >= 3; k--) {
         if (al.endsWith(bl.slice(0, k))) {
           const name = cap(al + bl.slice(k));
           if (name.length <= 10 && pronounceable(name) && !seen.has(name) && name.toLowerCase() !== al && name.toLowerCase() !== bl) {
@@ -111,7 +111,7 @@ function blend(rng: Rng, brief: Brief, vibe: Vibe): NameIdea[] {
           break;
         }
       }
-      if (out.length >= 3) return out;
+      if (out.length >= 2) return out;
     }
   }
   return out;
@@ -188,7 +188,7 @@ function descriptive(rng: Rng, brief: Brief, vibe: Vibe): NameIdea[] {
   ];
 }
 
-export function generateNames(rng: Rng, brief: Brief, vibe: Vibe, count = 6): NameIdea[] {
+export function generateNames(rng: Rng, brief: Brief, vibe: Vibe, count = 8): NameIdea[] {
   const buckets = [
     metaphor(rng, brief, vibe),
     blend(rng, brief, vibe),
