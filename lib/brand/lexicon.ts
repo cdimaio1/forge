@@ -193,7 +193,7 @@ export const VIBE_IMAGES: Record<Vibe, string[]> = {
 export const COMPOUND_TAILS: Record<Vibe, string[]> = {
   modern: ["field", "works", "line", "well", "house", "ward"],
   luxury: ["hall", "mere", "court", "worth", "ton", "gate"],
-  playful: ["pop", "bug", "bean", "hop", "nut", "patch"],
+  playful: ["pop", "hop", "patch", "club", "box", "bus"],
   retro: ["house", "shop", "yard", "ville", "mill", "port"],
   tech: ["base", "stack", "grid", "lab", "deck", "forge"],
 };

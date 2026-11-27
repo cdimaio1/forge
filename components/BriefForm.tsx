@@ -2,36 +2,10 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useId, useState } from "react";
-import { PALETTES } from "@/lib/brand/kit";
+import { PALETTES, TYPE } from "@/lib/brand/kit";
 import { VIBES, VIBE_DETAILS, isVibe, type Vibe } from "@/lib/brand/lexicon";
+import { EXAMPLES } from "@/lib/examples";
 import { resultsHref } from "@/lib/url";
-
-const EXAMPLES: { label: string; idea: string; customer: string; vibe: Vibe }[] = [
-  {
-    label: "Record shop",
-    idea: "A neighborhood record shop for vinyl collectors",
-    customer: "Vinyl collectors and crate diggers",
-    vibe: "retro",
-  },
-  {
-    label: "Dog-sitting app",
-    idea: "An app that helps dog owners find trusted dog sitters",
-    customer: "Busy professionals who own dogs",
-    vibe: "playful",
-  },
-  {
-    label: "Student budgeting",
-    idea: "A budgeting tool that helps college students track spending",
-    customer: "College students living on their own",
-    vibe: "modern",
-  },
-  {
-    label: "Team decisions",
-    idea: "A platform that helps small teams make decisions without meetings",
-    customer: "Remote product teams",
-    vibe: "tech",
-  },
-];
 
 export default function BriefForm() {
   const router = useRouter();
@@ -45,8 +19,8 @@ export default function BriefForm() {
   const [submitted, setSubmitted] = useState(false);
   const [pending, setPending] = useState(false);
 
-  const ideaError = submitted && !idea.trim() ? "Describe your idea in a sentence." : "";
-  const customerError = submitted && !customer.trim() ? "Say who it's for." : "";
+  const ideaMissing = submitted && !idea.trim();
+  const customerMissing = submitted && !customer.trim();
 
   function submit(e?: React.FormEvent) {
     e?.preventDefault();
@@ -69,104 +43,101 @@ export default function BriefForm() {
       onKeyDown={e => {
         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
       }}
-      className="card flex flex-col gap-6 p-6 sm:p-8"
+      className="sheet grain relative rounded-[28px] shadow-float"
       noValidate
     >
-      <div>
-        <div className="flex items-baseline justify-between gap-4">
-          <label htmlFor={`${id}-idea`} className="label">
-            What&apos;s the idea?
-          </label>
-          <span className="text-xs text-fg-4">{idea.length}/160</span>
-        </div>
-        <textarea
-          id={`${id}-idea`}
-          rows={2}
-          maxLength={160}
-          value={idea}
-          onChange={e => setIdea(e.target.value)}
-          placeholder="An app that helps dog owners find trusted sitters"
-          aria-invalid={Boolean(ideaError)}
-          aria-describedby={`${id}-idea-hint`}
-          className="field resize-none"
-          autoFocus
-        />
-        <p id={`${id}-idea-hint`} className={`mt-1 text-xs ${ideaError ? "text-danger" : "text-fg-3"}`}>
-          {ideaError || "One sentence works best. Include what it does, e.g. “helps… find…”"}
+      <div className="flex items-center justify-between border-b border-rule px-6 py-3 sm:px-9">
+        <span className="meta">The brief</span>
+        <span className="meta hidden sm:inline">⌘ + Enter to strike</span>
+      </div>
+
+      <div className="px-6 pb-8 pt-7 sm:px-9 sm:pt-9">
+        <p className="font-display text-[30px] leading-[1.35] tracking-[-0.01em] sm:text-[40px]">
+          <label htmlFor={`${id}-idea`}>I&apos;m building</label>{" "}
+          <input
+            id={`${id}-idea`}
+            className="blank"
+            value={idea}
+            maxLength={160}
+            onChange={e => setIdea(e.target.value)}
+            placeholder="an app that helps dog owners find sitters"
+            aria-invalid={ideaMissing}
+            aria-describedby={`${id}-help`}
+            autoFocus
+          />{" "}
+          <label htmlFor={`${id}-customer`}>for</label>{" "}
+          <input
+            id={`${id}-customer`}
+            className="blank"
+            value={customer}
+            maxLength={100}
+            onChange={e => setCustomer(e.target.value)}
+            placeholder="busy professionals with dogs"
+            aria-invalid={customerMissing}
+          />
+          <span>, and it should feel…</span>
         </p>
+        <p id={`${id}-help`} className={`mt-3 text-sm ${ideaMissing || customerMissing ? "text-stamp-ink" : "text-ink-3"}`}>
+          {ideaMissing || customerMissing
+            ? "Fill in both blanks: what it is, and who it's for."
+            : "Say what it does (“helps… find…”), not what it's called. The more specific, the better the names."}
+        </p>
+
+        <fieldset className="mt-7">
+          <legend className="sr-only">Feel</legend>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
+            {VIBES.map(v => {
+              const on = v === vibe;
+              const p = PALETTES[v][0].colors;
+              const face = TYPE[v][0].heading;
+              return (
+                <label
+                  key={v}
+                  className={`group relative flex cursor-pointer flex-col gap-3 rounded-2xl border p-3.5 transition-all duration-300 ${
+                    on ? "border-ink bg-ink text-paper shadow-lift" : "border-rule bg-sheet hover:-translate-y-0.5 hover:border-ink-3"
+                  }`}
+                >
+                  <input type="radio" name="vibe" value={v} checked={on} onChange={() => setVibe(v)} className="sr-only" />
+                  <span className="flex items-start justify-between">
+                    <span className="text-[30px] leading-none" style={{ fontFamily: `"${face.family}", Georgia, serif`, fontWeight: face.weight }}>
+                      Aa
+                    </span>
+                    <span className="flex -space-x-1.5" aria-hidden="true">
+                      {p.slice(0, 3).map(s => (
+                        <span key={s.hex} className="h-4 w-4 rounded-full" style={{ background: s.hex, boxShadow: `0 0 0 2px ${on ? "#121110" : "#fbfaf7"}` }} />
+                      ))}
+                    </span>
+                  </span>
+                  <span>
+                    <span className="block text-[15px] font-medium">{VIBE_DETAILS[v].label}</span>
+                    <span className={`block text-xs leading-4 ${on ? "text-paper/70" : "text-ink-3"}`}>{VIBE_DETAILS[v].blurb}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
       </div>
 
-      <div>
-        <label htmlFor={`${id}-customer`} className="label">
-          Who is it for?
-        </label>
-        <input
-          id={`${id}-customer`}
-          type="text"
-          maxLength={100}
-          value={customer}
-          onChange={e => setCustomer(e.target.value)}
-          placeholder="Busy professionals who own dogs"
-          aria-invalid={Boolean(customerError)}
-          className="field"
-        />
-        {customerError && <p className="mt-1 text-xs text-danger">{customerError}</p>}
-      </div>
-
-      <fieldset>
-        <legend className="label">Pick a feel</legend>
-        <div className="mt-1 grid grid-cols-1 gap-2 sm:grid-cols-5">
-          {VIBES.map(v => {
-            const selected = v === vibe;
-            const swatches = PALETTES[v][0].colors;
-            return (
-              <label
-                key={v}
-                className={`relative flex cursor-pointer items-center gap-3 rounded-md border p-3 transition-colors sm:flex-col sm:items-start sm:gap-2 ${
-                  selected
-                    ? "border-brand bg-brand-tint shadow-[inset_0_0_0_1px_var(--color-brand)]"
-                    : "border-stroke-strong bg-surface hover:border-[#c7c7c7] hover:bg-subtle"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="vibe"
-                  value={v}
-                  checked={selected}
-                  onChange={() => setVibe(v)}
-                  className="sr-only"
-                />
-                <span className="flex h-4 overflow-hidden rounded-sm ring-1 ring-black/10" aria-hidden="true">
-                  {swatches.map(s => (
-                    <span key={s.hex} className="w-3.5" style={{ background: s.hex }} />
-                  ))}
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold">{VIBE_DETAILS[v].label}</span>
-                  <span className="block text-xs leading-4 text-fg-3">{VIBE_DETAILS[v].blurb}</span>
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      <div className="flex flex-col-reverse gap-4 border-t border-stroke pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-1.5 text-xs text-fg-3">
-          <span className="mr-1">Try an example:</span>
+      <div className="flex flex-col-reverse gap-4 border-t border-rule px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-9">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="meta mr-1.5">Try</span>
           {EXAMPLES.map(ex => (
             <button
               key={ex.label}
               type="button"
               onClick={() => applyExample(ex)}
-              className="rounded-full border border-stroke bg-subtle px-2.5 py-0.5 text-fg-2 transition-colors hover:border-stroke-strong hover:bg-surface"
+              className="rounded-full border border-rule px-3 py-1 text-[13px] text-ink-2 transition-colors hover:border-ink hover:text-ink"
             >
               {ex.label}
             </button>
           ))}
         </div>
-        <button type="submit" className="btn btn-primary btn-lg shrink-0" disabled={pending}>
-          {pending ? "Generating…" : "Generate names"}
+        <button type="submit" className="btn btn-ink btn-lg shrink-0" disabled={pending}>
+          {pending ? "Striking…" : "Strike names"}
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
       </div>
     </form>

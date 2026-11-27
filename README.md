@@ -1,40 +1,38 @@
-# Forge
+# Coinage
 
-**Find a name worth building on.**
+**Coin a name. Strike a brand.**
 
-Describe a business idea and who it's for, pick a feel, and Forge gives you a shortlist of distinctive names. Each one comes with the reason it works. Pick a name and you see it as a brand: taglines, positioning, voice, an accessible color palette, and a type pairing, all previewed together on a mock homepage.
+Coinage is a name studio for first-time founders. Write one sentence about what you're building, who it's for and how it should feel. Coinage coins a shortlist of names, stress-tests each one, and strikes the one you pick into a full brand you can see in the wild.
 
-## Try it locally
+## What it does
+
+1. **The brief.** A single fill-in-the-blank sentence: *I'm building ___ for ___, and it should feel ___.* Five feels (Modern, Luxury, Playful, Retro, Tech) each carry their own palettes and type pairings.
+2. **The mint.** Eight names across naming-studio techniques (metaphor, compound, blend, coined, phrase, descriptive), each with the reason it works and an ownability score.
+3. **The stress test.** Length, say-it and spell-it checks with plain-language reasons, an app-icon check, and a live RDAP lookup for `.com`, `.co` and `.app`.
+4. **The brand board.** The chosen name as a specimen, then in the wild: homepage, app icon, business card, social post, sticker and lockups, all in the selected palette and type. Below that, the brand sheet: taglines, WCAG-checked colors, Google Fonts pairings, positioning and voice.
+5. **Export.** Copy a Markdown brand sheet, download JSON, or print to PDF. The URL holds the whole brief and every selection, so any result can be shared.
+
+## Naming engines
+
+- **Claude (optional).** Set `ANTHROPIC_API_KEY` and Coinage briefs Claude like a naming studio briefs a writer: concrete images over abstract virtues, mixed techniques, and a banned list of overused startup words and suffixes. `COINAGE_MODEL` overrides the model (default `claude-sonnet-5-5`). See [lib/brand/ai.ts](lib/brand/ai.ts).
+- **Curated engine (default, offline).** Hand-curated word banks per industry and Latin/Greek roots, combined with the same techniques. No key needed. See [lib/brand/names.ts](lib/brand/names.ts) and [lib/brand/lexicon.ts](lib/brand/lexicon.ts).
+
+## Run it
 
 ```sh
 npm ci
+cp .env.example .env.local   # optional: add your Anthropic key
 npm run dev
 ```
 
 Open [localhost:3000](http://localhost:3000) and try one of the example briefs.
 
-## How names are made
+## API
 
-Forge doesn't glue a suffix onto your first word. The [naming engine](lib/brand/names.ts) parses the brief, matches it to hand-curated word banks in [the lexicon](lib/brand/lexicon.ts), and uses the same techniques naming studios use:
+| Route | What it returns |
+| --- | --- |
+| `POST /api/names` | AI-coined names and taglines for `{ idea, customer, vibe, seed? }`, or `501` when no key is set |
+| `GET /api/domains?name=` | RDAP status for `.com`, `.co` and `.app` |
+| `POST /api/generate` | The full curated kit as JSON |
 
-| Strategy | Example | Why |
-| --- | --- | --- |
-| Metaphor | Chorus, Collar | A real word borrowed from the world of the business |
-| Blend | Encorecord, Whistleash | Two words merged where their letters overlap |
-| Compound | Needleyard, Leashbean | Two plain words fused into a place-like name |
-| Coined | Sonette, Amicola | Built on a Latin or Greek root with real meaning |
-| Phrase | Second Crate, Little Leash | A short name with personality |
-| Descriptive | Recordhouse | Says what you do; clear on day one, harder to own |
-
-Overused startup endings (-ify, -ly, -r, .io) are filtered out, and every shortlist mixes strategies.
-
-## How it works
-
-- **[Brief form](components/BriefForm.tsx)** on the home page collects the idea, audience, and feel.
-- **[Results](components/results/ResultsView.tsx)** generate everything in the browser from the brief. The URL holds the brief and your selections, so any result can be shared or bookmarked.
-- **[Kit generator](lib/brand/kit.ts)** builds taglines, positioning, voice, WCAG-checked palettes, and Google Fonts pairings.
-- **[`POST /api/generate`](app/api/generate/route.ts)** returns the same kit as JSON (`{ idea, customer, vibe, seed? }`).
-
-Generation is deterministic and runs locally. No API key needed.
-
-Built with Next.js, React, TypeScript, and Tailwind CSS.
+Built with Next.js, React, TypeScript and Tailwind CSS.

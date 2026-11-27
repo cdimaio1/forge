@@ -1,162 +1,203 @@
 @import "tailwindcss";
 
-/* Design tokens modeled on Microsoft Fluent 2: neutral canvas, one brand blue,
-   4px controls, 8px cards, soft layered shadows. */
+/* Coinage — a mint & letterpress identity.
+   Paper, ink, one stamp-red. Serif for the names, grotesk for the tool,
+   mono for the metadata stamped around the edges. */
 @theme {
-  --font-sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "Cascadia Mono", "Consolas", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
-  --color-brand: #0f6cbd;
-  --color-brand-hover: #115ea3;
-  --color-brand-pressed: #0c3b5e;
-  --color-brand-tint: #ebf3fc;
-  --color-brand-stroke: #b4d6fa;
+  --color-paper: #f4f2ed;
+  --color-sheet: #fbfaf7;
+  --color-ink: #121110;
+  --color-ink-2: #3b3936;
+  --color-ink-3: #5f5c57;
+  --color-rule: #dcd8d0;
+  --color-rule-strong: #c4bfb5;
+  --color-stamp: #e5371b;
+  --color-stamp-ink: #c42c13; /* AA on paper for small text */
+  --color-stamp-tint: #fbe3dc;
+  --color-good: #1f7a4a;
+  --color-warn: #a35b00;
 
-  --color-canvas: #f5f5f5;
-  --color-surface: #ffffff;
-  --color-subtle: #fafafa;
-  --color-stroke: #e0e0e0;
-  --color-stroke-strong: #d1d1d1;
-  --color-fg: #242424;
-  --color-fg-2: #424242;
-  --color-fg-3: #616161;
-  --color-fg-4: #707070;
-  --color-success: #107c10;
-  --color-danger: #c50f1f;
+  --shadow-lift: 0 1px 0 rgba(18, 17, 16, 0.04), 0 12px 28px -14px rgba(18, 17, 16, 0.35);
+  --shadow-float: 0 1px 0 rgba(18, 17, 16, 0.04), 0 30px 60px -30px rgba(18, 17, 16, 0.45);
 
-  --shadow-2: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.14);
-  --shadow-4: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.14);
-  --shadow-16: 0 0 2px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.14);
+  --animate-strike: strike 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  --animate-rise: rise 0.8s cubic-bezier(0.2, 0.8, 0.1, 1) both;
+  --animate-spin-slow: spin 24s linear infinite;
+
+  @keyframes strike {
+    0% { opacity: 0; transform: scale(1.18); filter: blur(6px); }
+    60% { opacity: 1; transform: scale(0.98); filter: blur(0); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
 }
 
 @layer base {
   html {
-    color: var(--color-fg);
-    background: var(--color-canvas);
+    color: var(--color-ink);
+    background: var(--color-paper);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: var(--color-brand-tint);
+    background: var(--color-stamp);
+    color: white;
   }
   :focus-visible {
-    outline: 2px solid var(--color-fg);
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline: 2px solid var(--color-stamp);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 }
 
 @layer components {
-  .card {
-    background: var(--color-surface);
-    border-radius: 8px;
-    box-shadow: var(--shadow-4);
+  /* Small uppercase metadata, the "stamped" edge text. */
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .sheet {
+    background: var(--color-sheet);
+    border: 1px solid var(--color-rule);
   }
 
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 32px;
-    padding: 0 12px;
-    border-radius: 4px;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
     font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
+    font-weight: 500;
     white-space: nowrap;
-    border: 1px solid var(--color-stroke-strong);
-    background: var(--color-surface);
-    color: var(--color-fg);
-    transition: background-color 0.1s, border-color 0.1s;
+    border: 1px solid var(--color-rule-strong);
+    background: transparent;
+    color: var(--color-ink);
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
     cursor: pointer;
   }
   .btn:hover {
-    background: #f5f5f5;
-    border-color: #c7c7c7;
+    border-color: var(--color-ink);
   }
   .btn:active {
-    background: #e0e0e0;
+    transform: translateY(1px);
   }
   .btn:disabled {
     cursor: not-allowed;
-    color: #bdbdbd;
-    background: #f0f0f0;
-    border-color: #e0e0e0;
+    opacity: 0.5;
   }
-  .btn-lg {
-    height: 40px;
-    padding: 0 16px;
-    font-size: 15px;
+  .btn-ink {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper);
   }
-  .btn-primary {
-    background: var(--color-brand);
-    border-color: transparent;
+  .btn-ink:hover {
+    background: var(--color-stamp);
+    border-color: var(--color-stamp);
     color: white;
   }
-  .btn-primary:hover {
-    background: var(--color-brand-hover);
-    border-color: transparent;
+  .btn-lg {
+    height: 52px;
+    padding: 0 26px;
+    font-size: 15px;
   }
-  .btn-primary:active {
-    background: var(--color-brand-pressed);
-  }
-  .btn-subtle {
-    background: transparent;
-    border-color: transparent;
-    color: var(--color-fg-2);
-    font-weight: 400;
-  }
-  .btn-subtle:hover {
-    background: #f0f0f0;
-    border-color: transparent;
-    color: var(--color-fg);
+  .btn-sm {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
   }
 
-  /* Fluent text input: hairline border with a darker bottom edge that turns
-     brand blue on focus. */
+  /* Inline "fill in the blank" field used in the brief sentence. */
+  .blank {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid var(--color-rule-strong);
+    border-radius: 0;
+    padding: 0 2px 2px;
+    color: var(--color-ink);
+    font: inherit;
+    transition: border-color 0.2s;
+    field-sizing: content;
+    min-width: 6ch;
+    max-width: 100%;
+  }
+  .blank::placeholder {
+    color: #9c978e;
+    font-style: italic;
+  }
+  .blank:hover {
+    border-bottom-color: var(--color-ink-3);
+  }
+  .blank:focus {
+    outline: none;
+    border-bottom-color: var(--color-stamp);
+  }
+  .blank[aria-invalid="true"] {
+    border-bottom-color: var(--color-stamp);
+  }
+
   .field {
     width: 100%;
-    background: var(--color-surface);
-    border: 1px solid var(--color-stroke-strong);
-    border-bottom-color: var(--color-fg-3);
-    border-radius: 4px;
-    padding: 6px 10px;
+    background: var(--color-sheet);
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 10px;
+    padding: 8px 12px;
     font-size: 14px;
     line-height: 20px;
-    color: var(--color-fg);
-    transition: border-color 0.1s, box-shadow 0.1s;
-  }
-  .field::placeholder {
-    color: var(--color-fg-4);
-  }
-  .field:hover {
-    border-color: #c7c7c7;
-    border-bottom-color: var(--color-fg-2);
+    color: var(--color-ink);
   }
   .field:focus {
     outline: none;
-    border-bottom-color: var(--color-brand);
-    box-shadow: inset 0 -1px 0 var(--color-brand);
-  }
-  .field[aria-invalid="true"] {
-    border-bottom-color: var(--color-danger);
-    box-shadow: inset 0 -1px 0 var(--color-danger);
+    border-color: var(--color-ink);
   }
 
-  .label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
-    color: var(--color-fg);
-    margin-bottom: 4px;
+  /* Milled coin edge for the mark and badges. */
+  .milled {
+    background:
+      repeating-conic-gradient(from 0deg, var(--color-ink) 0deg 4deg, transparent 4deg 8deg);
+    -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%);
+    mask: radial-gradient(circle, transparent 62%, #000 63%);
   }
 
-  .eyebrow {
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 16px;
-    color: var(--color-fg-3);
+  .grain {
+    position: relative;
   }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: radial-gradient(rgba(18, 17, 16, 0.07) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+}
+
+@media print {
+  header, .no-print { display: none !important; }
+  html, body { background: white; }
 }

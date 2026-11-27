@@ -168,7 +168,7 @@ function c(role: ColorRole, hex: string, name: string): BrandColor {
 }
 
 // ── Typography (all available on Google Fonts so the preview renders) ─────
-const TYPE: Record<Vibe, TypePairing[]> = {
+export const TYPE: Record<Vibe, TypePairing[]> = {
   modern: [
     { heading: { family: "Manrope", weight: 700 }, body: { family: "Inter", weight: 400 }, note: "Geometric headings with a workhorse body face. It reads well at any size." },
     { heading: { family: "Plus Jakarta Sans", weight: 700 }, body: { family: "Source Sans 3", weight: 400 }, note: "Slightly warmer and rounder, but still crisp and professional." },
